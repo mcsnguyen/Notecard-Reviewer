@@ -11,15 +11,12 @@ The program creates a 2D array with 2 columns, one term column and one definitio
 
 X, labeled as setSize in the driver class, is currently a variable declaration that represents the number of term and definition entries. This may be changed to adjust the quantity of entries. The rest of the code has been written to support any X value.
 
-There are four classes within the Notecard Reviewer: Driver, Set, Quizlet, UserInputException. The Set class handles the creation of aforementioned 2D array, accessors, mutators, empty verification, and array return. Quizlet inherits Set and takes in an array of object created in the driver class for sorting and searching. Lastly, UserInputException is a simple error message that it utilized in the driver class.
+There are four classes within the Notecard Reviewer: Driver, Set, Quizlet, UserInputException. 
 
-Limitations:
-This program has a limitation within the search methods. The user must insert all entries before executing the search for a comprehensive search. Otherwise, the search methods will only search the entries entered immediately before the search and after any prior searches, if applicable.
+-The Set class handles the creation of aforementioned 2D array, accessors, mutators, empty verification, and array return. 
 
-For instance, if user inserts and searches as follows.
-1. User inserts
-2. User searches
-3. User inserts again
-4. User searches again
+-Quizlet inherits Set and takes in an array of object created in the driver class for sorting and searching. The search inspects the term and definition categories separately and displays all sets that contain the searched word in for the chosen category.
 
-The step 2 search examines the entries in step 1 as intended. However, the step 4 search only inspects the entries in step 3. 
+-Lastly, UserInputException is a simple error message that it utilized in the driver class.
+
+

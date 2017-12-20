@@ -6,13 +6,7 @@ import java.util.Scanner;
  * 2nd Column: Definitions
  * 
  * Optional Changes: User may change the setNum, and setSize declarations to increase the number of set objects and the size of possible terms and definitions in each set object  
- * 
- * Limitation of this program: The user must insert all terms and definitions before a search can be properly executed to encompass all of the terms and definitions
- * 							   Else, the search method will only search the terms and definitions inserted before search is executed
- * 
- * 							   For example, if the user inserts 1 set of terms and definitions, searches for a specific word, inserts 2 more sets of terms and definitions, and 
- * 							   searches for another word, then only the last 2 sets of terms and definitions are encompassed by the second search. However, this second search will
- * 						  	   not be able to search the first set of terms and definitions.
+ *
 */
 
 public class Driver{
@@ -29,7 +23,9 @@ public class Driver{
 		}
 		
 		Scanner input = new Scanner(System.in);
-		int setChoice, userChoice, position, numInserted; //Input variables and counters
+		Quizlet search = new Quizlet(); //Default constructor
+		
+		int setChoice, userChoice, position, insertedSet; //Input variables and counters
 		boolean cont; //Condition do while loop in term and definition insertion
 		
 		//Initializing variables
@@ -37,7 +33,7 @@ public class Driver{
 		setChoice = 0;
 		userChoice = 0;
 		position = 0;
-		numInserted = 0;
+		insertedSet = 0;
 		cont = true;
 		
 		
@@ -75,21 +71,22 @@ public class Driver{
 				else if(userChoice == 2){
 				
 					do {
-						if(position <= (setSize - 1)) {
+						if(position < setSize) {
 							insertInfo(objArr[position], input); //If not full, insert terms and definitions
-						}
-						System.out.println("Would you like to create another set? Input yes or no.");
-						proceed = input.nextLine();
 						
-						if(proceed.equals("yes")||proceed.equals("y")) {
-							cont = true;
+							position++; //increment full counter
+							insertedSet++; //increment size counter
+							
+							System.out.println("Would you like to create another set? Input yes or no.");
+							proceed = input.nextLine();
+							if(proceed.equals("yes")||proceed.equals("y")) {
+								cont = true;
+							}
+							else {
+								cont = false;
+							}
 						}
 						else {
-							cont = false;
-						}
-						position++; //increment full counter
-						numInserted++; //increment size counter
-						if(position == setSize) {
 							System.out.println("Maximum sets created...");
 							cont = false;
 						}
@@ -99,7 +96,7 @@ public class Driver{
 				
 				//Search based on user input
 				else if(userChoice == 3){
-					searchObj(objArr, input, numInserted); //Takes in an array of objects and consolidates them into one array list to sort and search
+					searchObj(objArr, search, input, insertedSet, setSize); //Takes in an array of objects and consolidates them into one array list to sort and search
 				}
 				//Exits the program
 				else if(userChoice == 4) {
@@ -138,8 +135,8 @@ public class Driver{
 	
 	public static void displayInfo(Set obj) {
 		for(int i = 0; i < obj.getRowLength(); i++){
-			System.out.println((i+1) +". Term: " + obj.getTerm(i));
-			System.out.println((i+1) + ". Definition: " + obj.getDefinition(i));
+			System.out.println("Term: " + obj.getTerm(i));
+			System.out.println("Definition: " + obj.getDefinition(i));
 		}
 	}
 	
@@ -155,23 +152,31 @@ public class Driver{
 		}
 	}
 	
-	public static void searchObj(Set[] obj, Scanner scan, int size) {
-		Quizlet searcher = new Quizlet(); //Default constructor
-		searcher.sortArr(obj, size); //Consolidates array of objects into one array list and sort
+	public static void searchObj(Set[] obj, Quizlet searcher, Scanner scan, int size, int max) {
+		searcher.sortArr(obj, size, max); //Consolidates array of objects into one array list and sort
 		System.out.println("You have chosen to search for a specific word. Would you like to search specifically through (1 or 2)?");
 		System.out.println("1. Term Cards" + "\n2. Definition Cards");
-		int searchuserChoice = scan.nextInt();
-		scan.nextLine();
 		
-		if(searchuserChoice == 1) {	
-			System.out.println("Input the term you wish to search for.");
-			String search = scan.nextLine();
-			System.out.println(searcher.findTerm(search)); //Binary search
+		try {
+			int searchuserChoice = scan.nextInt();
+			scan.nextLine();
+		
+			if(searchuserChoice == 1) {	
+				System.out.println("Input the term you wish to search for.");
+				String search = scan.nextLine();
+				System.out.println(searcher.findTerm(obj, search, size, max)); //Binary search
+			}
+			else if(searchuserChoice == 2) {
+				System.out.println("Input the definition you wish to search for.");
+				String search = scan.nextLine();
+				System.out.println(searcher.findDef(obj, search, size, max)); //Iterative search
+			}
+			else {
+				throw new UserInputException("Invalid Search Choice");
+			}
 		}
-		else if(searchuserChoice == 2) {
-			System.out.println("Input the definition you wish to search for.");
-			String search = scan.nextLine();
-			System.out.println(searcher.findDef(search)); //Iterative search
+		catch(UserInputException e) {
+			System.out.println("Error: " + e.getMessage());
 		}
 	}
 	
